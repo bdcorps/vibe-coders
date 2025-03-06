@@ -37,8 +37,8 @@ export class MemStorage implements IStorage {
       {
         id: 3,
         type: 'linkedin',
-        embedId: '7172573389931028480',
-        tags: ['lovable', 'ecommerce']
+        embedId: '7303223590756233216',
+        tags: ['lovable', 'saas', 'education']
       }
     ];
   }
