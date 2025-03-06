@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { TwitterEmbed, LinkedInEmbed } from 'react-social-media-embed';
+import { Tweet } from "react-tweet";
 import { type Post, type Tag } from "@shared/schema";
 import { motion } from "framer-motion";
 
@@ -27,13 +27,17 @@ export function SocialCard({ post, tags }: SocialCardProps) {
     >
       <Card className="overflow-hidden">
         <div className="p-4">
-          <div className="mb-4">
-            {post.type === 'twitter' ? (
-              <TwitterEmbed url={sourceUrl} />
-            ) : (
-              <LinkedInEmbed url={sourceUrl} />
-            )}
-          </div>
+          {post.type === 'twitter' ? (
+            <Tweet id={post.embedId} />
+          ) : (
+            <iframe
+              src={`https://www.linkedin.com/embed/feed/update/${post.embedId}`}
+              width="100%"
+              height="400"
+              frameBorder="0"
+              allowFullScreen
+            />
+          )}
           <div className="flex flex-col gap-4 mt-4">
             <div className="flex gap-2">
               {postTags.map(tag => (
