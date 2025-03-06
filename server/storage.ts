@@ -16,15 +16,17 @@ export class MemStorage implements IStorage {
       { id: 'lovable', label: 'Lovable', category: 'technology' },
       { id: 'saas', label: 'SaaS', category: 'industry' },
       { id: 'ecommerce', label: 'E-commerce', category: 'industry' },
-      { id: 'education', label: 'Education', category: 'industry' }
+      { id: 'education', label: 'Education', category: 'industry' },
+      { id: 'cursor', label: 'Cursor', category: 'technology' },
+      { id: 'chatgpt', label: 'ChatGPT', category: 'technology' }
     ];
 
     this.posts = [
       {
         id: 1,
         type: 'twitter',
-        embedId: '1767643562486153616',
-        tags: ['replit', 'education']
+        embedId: '1893757209512640981',
+        tags: ['lovable', 'chatgpt', 'cursor', 'saas']
       },
       {
         id: 2,
