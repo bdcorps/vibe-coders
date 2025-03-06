@@ -7,8 +7,15 @@ import { filterPostsByTags } from "@/lib/posts";
 import { type Post, type Tag } from "@shared/schema";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Skeleton } from "@/components/ui/skeleton";
+import Masonry from 'react-masonry-css';
 
 const POSTS_PER_PAGE = 9;
+
+const breakpointColumns = {
+  default: 3,
+  1100: 2,
+  700: 1
+};
 
 export default function Home() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -23,14 +30,12 @@ export default function Home() {
     queryKey: ["/api/tags"],
   });
 
-  // Memoize the filtered posts to prevent unnecessary recalculations
   const filteredPosts = useMemo(() => 
     filterPostsByTags(posts, selectedTags), 
     [posts, selectedTags]
   );
 
   useEffect(() => {
-    // Reset visible posts when filters change
     const slicedPosts = filteredPosts.slice(0, page * POSTS_PER_PAGE);
     setVisiblePosts(slicedPosts);
   }, [filteredPosts, page]);
@@ -41,7 +46,7 @@ export default function Home() {
         ? prev.filter((id) => id !== tagId)
         : [...prev, tagId]
     );
-    setPage(1); // Reset to first page when changing filters
+    setPage(1);
   };
 
   const loadMore = () => {
@@ -53,13 +58,17 @@ export default function Home() {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+          <Masonry
+            breakpointCols={breakpointColumns}
+            className="flex gap-6 -ml-6"
+            columnClassName="pl-6"
+          >
             {Array(6)
               .fill(0)
               .map((_, i) => (
-                <Skeleton key={i} className="h-[400px] w-full" />
+                <Skeleton key={i} className="h-[400px] w-full mb-6" />
               ))}
-          </div>
+          </Masonry>
         </main>
       </div>
     );
@@ -79,11 +88,19 @@ export default function Home() {
           next={loadMore}
           hasMore={visiblePosts.length < filteredPosts.length}
           loader={<h4>Loading...</h4>}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
+          className="w-full"
         >
-          {visiblePosts.map((post) => (
-            <SocialCard key={post.id} post={post} tags={tags} />
-          ))}
+          <Masonry
+            breakpointCols={breakpointColumns}
+            className="flex gap-6 -ml-6"
+            columnClassName="pl-6"
+          >
+            {visiblePosts.map((post) => (
+              <div key={post.id} className="mb-6">
+                <SocialCard post={post} tags={tags} />
+              </div>
+            ))}
+          </Masonry>
         </InfiniteScroll>
       </main>
     </div>
