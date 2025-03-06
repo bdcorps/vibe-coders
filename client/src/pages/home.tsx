@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Header } from "@/components/header";
 import { TagFilter } from "@/components/tag-filter";
 import { SocialCard } from "@/components/social-card";
@@ -16,30 +16,36 @@ export default function Home() {
   const [page, setPage] = useState(1);
 
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
-    queryKey: ['/api/posts']
+    queryKey: ["/api/posts"],
   });
 
   const { data: tags = [], isLoading: tagsLoading } = useQuery<Tag[]>({
-    queryKey: ['/api/tags']
+    queryKey: ["/api/tags"],
   });
 
-  const filteredPosts = filterPostsByTags(posts, selectedTags);
+  // Memoize the filtered posts to prevent unnecessary recalculations
+  const filteredPosts = useMemo(() => 
+    filterPostsByTags(posts, selectedTags), 
+    [posts, selectedTags]
+  );
 
   useEffect(() => {
-    setVisiblePosts(filteredPosts.slice(0, page * POSTS_PER_PAGE));
+    // Reset visible posts when filters change
+    const slicedPosts = filteredPosts.slice(0, page * POSTS_PER_PAGE);
+    setVisiblePosts(slicedPosts);
   }, [filteredPosts, page]);
 
   const handleTagSelect = (tagId: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tagId) 
-        ? prev.filter(id => id !== tagId)
+    setSelectedTags((prev) =>
+      prev.includes(tagId)
+        ? prev.filter((id) => id !== tagId)
         : [...prev, tagId]
     );
-    setPage(1);
+    setPage(1); // Reset to first page when changing filters
   };
 
   const loadMore = () => {
-    setPage(prev => prev + 1);
+    setPage((prev) => prev + 1);
   };
 
   if (postsLoading || tagsLoading) {
@@ -47,10 +53,12 @@ export default function Home() {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array(6).fill(0).map((_, i) => (
-              <Skeleton key={i} className="h-[400px] w-full" />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            {Array(6)
+              .fill(0)
+              .map((_, i) => (
+                <Skeleton key={i} className="h-[400px] w-full" />
+              ))}
           </div>
         </main>
       </div>
@@ -71,9 +79,9 @@ export default function Home() {
           next={loadMore}
           hasMore={visiblePosts.length < filteredPosts.length}
           loader={<h4>Loading...</h4>}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
         >
-          {visiblePosts.map(post => (
+          {visiblePosts.map((post) => (
             <SocialCard key={post.id} post={post} tags={tags} />
           ))}
         </InfiniteScroll>
