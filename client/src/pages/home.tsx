@@ -1,18 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect, useMemo } from "react";
 import { Header } from "@/components/header";
-import { TagFilter } from "@/components/tag-filter";
 import { SocialCard } from "@/components/social-card";
+import { TagFilter } from "@/components/tag-filter";
+import { Skeleton } from "@/components/ui/skeleton";
 import { filterPostsByTags } from "@/lib/posts";
 import { type Post, type Tag } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Skeleton } from "@/components/ui/skeleton";
 import Masonry from 'react-masonry-css';
 
 const POSTS_PER_PAGE = 9;
 
 const breakpointColumns = {
-  default: 3,
+  default: 2,
   1100: 2,
   700: 1
 };
@@ -30,8 +30,8 @@ export default function Home() {
     queryKey: ["/api/tags"],
   });
 
-  const filteredPosts = useMemo(() => 
-    filterPostsByTags(posts, selectedTags), 
+  const filteredPosts = useMemo(() =>
+    filterPostsByTags(posts, selectedTags),
     [posts, selectedTags]
   );
 
@@ -96,7 +96,7 @@ export default function Home() {
             columnClassName="pl-6"
           >
             {visiblePosts.map((post) => (
-              <div key={post.id} className="mb-6">
+              <div key={post.id} className="mb-6 rounded-lg">
                 <SocialCard post={post} tags={tags} />
               </div>
             ))}
