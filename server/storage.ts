@@ -1,4 +1,5 @@
 import { posts, type Post, type InsertPost, type Tag } from "@shared/schema";
+import { parseSocialUrls } from "@shared/social-url-parser";
 
 export interface IStorage {
   getPosts(): Promise<Post[]>;
@@ -21,26 +22,22 @@ export class MemStorage implements IStorage {
       { id: 'chatgpt', label: 'ChatGPT', category: 'technology' }
     ];
 
-    this.posts = [
-      {
-        id: 1,
-        type: 'twitter',
-        embedId: '1893757209512640981',
-        tags: ['lovable', 'chatgpt', 'cursor', 'saas']
-      },
-      {
-        id: 2,
-        type: 'twitter',
-        embedId: '1767548473359192276',
-        tags: ['v0', 'saas']
-      },
-      {
-        id: 3,
-        type: 'linkedin',
-        embedId: '7303223590756233216',
-        tags: ['lovable', 'saas', 'education']
-      }
+    // Parse the example URLs
+    const urls = [
+      'https://www.linkedin.com/posts/joettaylor_built-an-seo-platform-in-7-minutes-using-activity-7300834521128525826-OVb0',
+      'https://x.com/IndieJayCodes/status/1896232105711173819'
     ];
+
+    const parsedPosts = parseSocialUrls(urls);
+
+    this.posts = parsedPosts.map((post, index) => ({
+      id: index + 1,
+      type: post.platform,
+      embedId: post.embedId,
+      tags: index === 0 
+        ? ['v0', 'saas'] // Tags for the LinkedIn post about SEO platform
+        : ['replit', 'education'] // Tags for the Twitter post
+    }));
   }
 
   async getPosts(): Promise<Post[]> {
