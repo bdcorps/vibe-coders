@@ -54,6 +54,7 @@ export class MemStorage implements IStorage {
       "https://x.com/HalimAlrasihi/status/1891509348012085402",
       "https://x.com/AtomSilverman/status/1892652734412701920",
       "https://x.com/leerob/status/1892336569039933454",
+      "https://x.com/AtomSilverman/status/1895273978190799250"
     ];
 
     const parsedPosts = parseSocialUrls(urls);
